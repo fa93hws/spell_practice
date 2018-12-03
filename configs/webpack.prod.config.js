@@ -17,7 +17,7 @@ module.exports = merge(config, {
     filename: "static/js/[name].[chunkhash:8].js",
     chunkFilename: 'static/js/[name].[chunkhash:8].js',
     path: path.resolve(__dirname, '../dist/'),
-    publicPath: '/'
+    publicPath: '/spell_practice'
   },
   mode: 'production',
   optimization: {
