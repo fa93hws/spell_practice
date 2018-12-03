@@ -1,0 +1,27 @@
+@import '../../assets/css/size.less';
+@import '../../assets/css/color.less';
+
+.container {
+  width: 150px;
+  min-height: calc(100vh - @top-bar-height);
+  flex: 0 0 auto;
+}
+
+.paper {
+  height: 100%;
+}
+
+.paper .active {
+  background: @blue400;
+  color: white;
+  display: block;
+  height: 100%;
+  &:hover {
+    color: inherit;
+  }
+}
+.link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}

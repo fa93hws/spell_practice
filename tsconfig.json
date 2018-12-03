@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
+    "downlevelIteration": true,
     "strict": true,
     "baseUrl": ".",
     "paths": {
