@@ -1,16 +1,13 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-const path = require('path');
 const loaders = require('./loaders');
 
 const config = require('./webpack.base.config');
 
 module.exports = merge(config, {
   output: {
-    filename: "static/js/[name].[hash:8].js",
-    chunkFilename: 'static/js/[name].[hash:8].js',
-    path: path.resolve(__dirname, '../dist/'),
-    publicPath: '/'
+    filename: "static/js/[name].js",
+    chunkFilename: 'static/js/[name].js'
   },
   mode: 'development',
   devtool: 'source-map',

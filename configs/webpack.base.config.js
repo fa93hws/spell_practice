@@ -3,6 +3,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: "./src/index.tsx",
+  output: {
+    path: path.resolve(__dirname, '../dist/'),
+    publicPath: '/spell_practice'
+  },
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
     alias: {

@@ -15,9 +15,7 @@ const prerenderRoutes = require('../scripts/prerender-routes');
 module.exports = merge(config, {
   output: {
     filename: "static/js/[name].[chunkhash:8].js",
-    chunkFilename: 'static/js/[name].[chunkhash:8].js',
-    path: path.resolve(__dirname, '../dist/'),
-    publicPath: '/spell_practice'
+    chunkFilename: 'static/js/[name].[chunkhash:8].js'
   },
   mode: 'production',
   optimization: {

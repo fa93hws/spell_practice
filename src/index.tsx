@@ -7,7 +7,7 @@ import App from './app';
 
 const container = document.getElementById('root');
 render(
-  <BrowserRouter>
+  <BrowserRouter basename="spell_practice">
     <App />
   </BrowserRouter>,
   container
