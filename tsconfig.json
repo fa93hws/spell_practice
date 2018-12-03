@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "strict": true,
@@ -10,7 +9,7 @@
     },
     "jsx": "react",
     "module": "ESNext",
-    "moduleResolution": "node",    
+    "moduleResolution": "node",
     "lib": [
       "es2015",
       "dom"
@@ -24,5 +23,5 @@
     "node_modules",
     "**/*.test.ts",
     "**/*.spec.ts"
-  ],    
+  ]
 }

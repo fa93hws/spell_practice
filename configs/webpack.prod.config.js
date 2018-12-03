@@ -24,7 +24,7 @@ module.exports = merge(config, {
     splitChunks: {
       cacheGroups: {
         vendors: {
-          test:  /node_modules\/(?!markdown-it|katex|mdurl|entities|linkify-it)/,
+          test:  /node_modules/,
           name: 'vendors',
           chunks: 'all'
         }
@@ -52,12 +52,11 @@ module.exports = merge(config, {
     new CleanWebpackPlugin(['dist'], {
       root: path.join(__dirname, '..')
     }),
-    ...config.plugins,
     new MiniCssExtractPlugin({
       filename: "static/css/[name].[chunkhash:8].css",
       chunkFilename: "static/css/[name].[chunkhash:8].css"
     }),
-    new CopyWebpackPlugin(['_config.yml', 'CNAME']),
+    new CopyWebpackPlugin(['_config.yml']),
     new PrerenderSPAPlugin({
       staticDir: path.join(__dirname, '../dist'),
       routes: prerenderRoutes,
@@ -66,8 +65,8 @@ module.exports = merge(config, {
         return renderedRoute;
       },
       renderer: new PrerenderSPAPlugin.PuppeteerRenderer({
-        injectProperty: '__PRERENDER_INJECTED',
-        renderAfterDocumentEvent: 'render-trigger'
+        // injectProperty: '__PRERENDER_INJECTED',
+        // renderAfterDocumentEvent: 'render-trigger'
       })
     })
   ]
