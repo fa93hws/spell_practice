@@ -1,3 +1,4 @@
+@import './color.less';
 body {
   margin: 0;
 }
@@ -5,9 +6,10 @@ body {
 :global{
   .global__body {
     display: flex;
+    background-color: @grey050;
   }
   .global__main {
     flex-grow: 1;
-    margin-left: 24px;
+    margin: 24px;
   }
 }

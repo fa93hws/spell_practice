@@ -12,7 +12,9 @@ module.exports = merge(config, {
   mode: 'development',
   devtool: 'source-map',
   devServer: {
-    historyApiFallback: true,
+    historyApiFallback: {
+      index: '/spell_practice/'
+    },
     hot: true,
     inline: true
   },

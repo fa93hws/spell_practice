@@ -10,13 +10,11 @@ enum ERoutes { wordList, practice, report, about }
 const routePaths = new Map([
   [ERoutes.wordList,'/words'],
   [ERoutes.practice, '/practice'],
-  [ERoutes.report, '/report'],
   [ERoutes.about, '/']
 ]);
 const routeLabels = new Map([
   [ERoutes.wordList,'Word List'],
   [ERoutes.practice, 'Practice'],
-  [ERoutes.report, 'Report'],
   [ERoutes.about, 'About']
 ]);
 
@@ -42,7 +40,6 @@ function LeftBar() {
         <MenuList>
           <Item route={ERoutes.wordList} />
           <Item route={ERoutes.practice} />
-          <Item route={ERoutes.report} />
           <Item route={ERoutes.about} />
         </MenuList>
       </Paper>
