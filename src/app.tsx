@@ -5,6 +5,8 @@ import TopBar from './components/top-bar';
 import LeftBar from './components/left-bar';
 import Home from './containers/home';
 import WordList from './containers/word-list';
+import PracticePage from './containers/practice';
+import NotFoundPage from './containers/404';
 import './assets/css/global.less';
 
 export default function App() {
@@ -21,6 +23,8 @@ export default function App() {
           <Switch>
             <Route exact path="/" component={Home}/>
             <Route exact path="/words" component={WordList} />
+            <Route exact path="/practice" component={PracticePage} />
+            <Route component={NotFoundPage} />
           </Switch>
         </div>
       </div>

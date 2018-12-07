@@ -37,7 +37,7 @@ function LeftBar() {
   return (
     <aside className={styles.container}>
       <Paper square className={styles.paper}>
-        <MenuList>
+        <MenuList className={styles.list}>
           <Item route={ERoutes.wordList} />
           <Item route={ERoutes.practice} />
           <Item route={ERoutes.about} />

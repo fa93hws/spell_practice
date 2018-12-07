@@ -40,30 +40,11 @@ const TableContext = createContext<ITableContext>({
   order: 'desc'
 });
 
-function desc(a: IWordDetail, b: IWordDetail, orderBy: keyof IWordDetail) {
-  if (b[orderBy] < a[orderBy]) return -1;
-  else if (b[orderBy] > a[orderBy]) return 1;
-  else return 0;
-}
-function stableSort(array: IWordDetail[][], cmp: (a: IWordDetail, b: IWordDetail) => number) {
-  return (array.map((el, index) => [el, index]) as Array<[IWordDetail, number]>)
-  .sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) return order;
-    else return a[1] - b[1];
-  }).map(el => el[0]);
-}
-function getSorting(order: 'desc' | 'asc', orderBy: keyof IWordDetail) {
-  return order === 'desc' ?
-  (a: IWordDetail, b: IWordDetail) => desc(a, b, orderBy) :
-  (a: IWordDetail, b: IWordDetail) => -desc(a, b, orderBy);
-}
-
 const columns = [
   { id: 'spell', numeric: false, label: 'Word' },
-  { id: 'numTried', numeric: true, label: 'Number of tried' },
+  { id: 'numTried', numeric: true, label: 'Number of tries' },
   { id: 'accuracy', numeric: true, label: 'Accuracy(%)' },
-  { id: 'timeAdded', numeric: false, label: 'Added at(yyyy-mm-dd)' },
+  { id: 'timeAdded', numeric: false, label: 'Added at\r\n(yyyy-mm-dd)' },
 ];
 
 function WordTableHead({
@@ -158,9 +139,7 @@ export default function WordTable() {
                 <TableCell padding="checkbox">
                   <Checkbox checked={false} />
                 </TableCell>
-                <TableCell component="th" scope="row" padding="none">
-                  {w.spell}
-                </TableCell>
+                <TableCell>{w.spell}</TableCell>
                 <TableCell numeric>{w.numTried}</TableCell>
                 <TableCell numeric>{w.accuracy}</TableCell>
                 <TableCell numeric>{w.timeAdded}</TableCell>

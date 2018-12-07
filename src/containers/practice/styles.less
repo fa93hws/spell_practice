@@ -1,0 +1,47 @@
+@import '../../assets/css/component.less';
+@import '../../assets/css/color.less';
+
+.body {
+  composes: paper-padding;
+}
+
+.instruction {
+  margin-bottom: 24px;
+}
+
+.form {
+  margin-top: 24px;
+}
+
+.spell-input-wrapper {
+  margin-top: 24px;
+
+  .spell-instruction {
+    display: inline;
+    vertical-align: bottom;
+    margin-right: 1em;
+  }
+
+  .cross-icon {
+    display: none;
+    color: @red500;
+    vertical-align: bottom;
+    &.show {
+      display: inline;
+    }
+  }
+}
+
+.tool-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 24px;
+
+  .answer {
+    visibility: hidden;
+    &.show {
+      visibility: visible;
+    }
+  }
+}

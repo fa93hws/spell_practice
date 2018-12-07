@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -13,7 +14,7 @@ import ListTable from './list-table';
 import styles from './styles.less';
 
 function AddWordSection() {
-  const [text, setText] = useTextInput('');
+  const [text, setText, setTextDirectly] = useTextInput('');
   const [list, setList] = globalStore.useState<WordListModel>('word-list');
 
   function addWords() {
@@ -21,6 +22,7 @@ function AddWordSection() {
     list.addWords(newWords);
     setList(new WordListModel(list.items));
     wordApis.saveToStorage(list);
+    setTextDirectly('');
   }
 
   return (
@@ -55,10 +57,10 @@ export default function WordList() {
         variant="h2"
         gutterBottom
         component="h1"
-        className={styles.title}
       >
           Word List
       </Typography>
+      <Divider />
       <Paper className={styles.body}>
         <AddWordSection />
         <ListTable />

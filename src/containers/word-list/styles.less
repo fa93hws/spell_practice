@@ -1,28 +1,26 @@
 @import '../../assets/css/color.less';
 @import '../../assets/css/component.less';
 
-.title {
-  composes: pageTitle;
-}
-
 .body {
+  composes: paper-padding;
   display: flex;
-  padding: 12px 0;
 }
 
 .body .section {
   display: flex;
-  padding: 0 24px;
   flex-direction: column;
 }
 
 .add-section {
   composes: section;
+  padding-right: 24px;
   border-right: 1px solid @grey300;
 }
 
 .list-section {
   composes: section;
+  padding-left: 24px;
+  flex: 1 0 auto;
 }
 
 

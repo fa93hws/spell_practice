@@ -1,11 +1,13 @@
 import { IWordDetail } from '@/containers/word-list/list-table';
+import { IPracticeList } from '@/containers/practice';
 import bindthis from '../decorators/bindthis';
 import { Pageable } from './pageable';
 import { WordItemModel } from "./word-item";
+import wordApis from '../api/word-api';
 
 export type StorageFormatType = [string, number, number, string];
 
-export class WordListModel extends Pageable<WordItemModel> {
+export class WordListModel extends Pageable<WordItemModel> implements IPracticeList {
   constructor(public items: WordItemModel[]) {
     super();
   };
@@ -35,6 +37,13 @@ export class WordListModel extends Pageable<WordItemModel> {
     return this.items.map(w =>
       <StorageFormatType>[w.spell, w.numTried, w.numCorrect, w.timeAdded]
     );
+  }
+  @bindthis public saveToStorage(): void {
+    wordApis.saveToStorage(this);
+  }
+  @bindthis public pickRandomly(): WordItemModel {
+    const idx = Math.floor(Math.random() * this.length);
+    return this.items[idx];
   }
 
   @bindthis private desc(a: IWordDetail, b: IWordDetail, orderBy: keyof IWordDetail) {

@@ -3,7 +3,8 @@ import { useState, ChangeEvent } from 'react';
 
 export default function useTextInput(initVal: string, debounceFlag: boolean = false):[
   string,
-  (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  (val: string) => void
 ] {
   const [val, _setVal] = useState(initVal);
   let setVal = function(ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -11,5 +12,5 @@ export default function useTextInput(initVal: string, debounceFlag: boolean = fa
   }
   if (debounceFlag === true)
     setVal = debounce(setVal);
-  return [val, setVal];
+  return [val, setVal, _setVal];
 }
