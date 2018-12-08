@@ -152,7 +152,7 @@ export default function WordTable() {
           page={page-1}
           component="div"
           rowsPerPage={limit}
-          count={Math.ceil(list.length/limit)}
+          count={list.length}
           rowsPerPageOptions={[10, 20]}
           // onChangePage={() => {}}
           onChangePage={(ev: any, page: number) => {
