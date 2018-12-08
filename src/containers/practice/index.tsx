@@ -27,6 +27,7 @@ export interface IPracticeList {
 function PracticeForm({ list }: { list: IPracticeList }) {
   const [word, setWord] = useState<IPracticeWord>(list.pickRandomly());
   const [spell, setSpell, setSpellDirectly] = useTextInput('');
+  const [explanation, setExplanation] = useState('');
   const [isAnswerShown, setIsAnswerShown] = useState(false);
   const [isWrong, setIsWrong] = useState(false);
 
@@ -35,9 +36,9 @@ function PracticeForm({ list }: { list: IPracticeList }) {
     function handler(ev: KeyboardEvent) {
       if (ev.key !== 'Enter') return;
       // ctrl + enter, show answer
-      if (ev.ctrlKey) showAnswer();
+      if (ev.ctrlKey && !ev.altKey) showAnswer();
       // alt + enter, read again
-      if (ev.altKey) voice.speak(word.spell, 'US English Male');
+      if (ev.altKey && ! ev.ctrlKey) voice.speak(word.spell, 'US English Female');
     }
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
@@ -45,16 +46,22 @@ function PracticeForm({ list }: { list: IPracticeList }) {
 
   // read the word
   useEffect(() => {
-    voice.speak(word.spell, 'US English Male');
+    voice.speak(word.spell, 'US English Female');
   }, [word, word.numTried]);
 
   function showAnswer() {
     setIsAnswerShown(true);
     word.compare('');
+    wordApis.getTranslation(word.spell).then(setExplanation).catch(err => {
+      console.error(err);
+      setExplanation('Error in getting translation');
+    });
   }
+
   function nextWord() {
     setIsWrong(false);
     setIsAnswerShown(false);
+    setExplanation('');
     setWord(list.pickRandomly());      
   }
   // handle submit
@@ -119,6 +126,7 @@ function PracticeForm({ list }: { list: IPracticeList }) {
           className={styles.answer+' ' + (isAnswerShown?styles.show:'')}
         >
           {word.spell.toLowerCase()}
+          {explanation===''?'...':`(${explanation})`}
         </Typography>
       </div>
     </section>
