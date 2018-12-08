@@ -26,6 +26,8 @@ export interface IPracticeList {
 
 function PracticeForm({ list }: { list: IPracticeList }) {
   const [word, setWord] = useState<IPracticeWord>(list.pickRandomly());
+  const [totalCount, setTotalCount] = useState(0);
+  const [numCorrect, setNumCorrect] = useState(0);
   const [spell, setSpell, setSpellDirectly] = useTextInput('');
   const [explanation, setExplanation] = useState('');
   const [isAnswerShown, setIsAnswerShown] = useState(false);
@@ -62,7 +64,9 @@ function PracticeForm({ list }: { list: IPracticeList }) {
     setIsWrong(false);
     setIsAnswerShown(false);
     setExplanation('');
-    setWord(list.pickRandomly());      
+    setSpellDirectly('');
+    setWord(list.pickRandomly());
+    setTotalCount(totalCount + 1);
   }
   // handle submit
   function onKeyPress(ev: React.KeyboardEvent<HTMLInputElement>) {
@@ -71,8 +75,9 @@ function PracticeForm({ list }: { list: IPracticeList }) {
     if (word.compare(spell)) {
       nextWord();
       if (isAnswerShown) word.numCorrect--;
+      else if (!isWrong) setNumCorrect(numCorrect + 1)
     }
-    else setIsWrong(true);
+    else if (isWrong === false) setIsWrong(true);
     setTimeout(list.saveToStorage);
   }
 
@@ -85,6 +90,9 @@ function PracticeForm({ list }: { list: IPracticeList }) {
 
   return (
     <section className={styles.form}>
+      <Typography variant="body1" component="p">
+        Accuracy: {numCorrect} out of {totalCount}
+      </Typography>
       {/* <Fab size="small" color="primary">
         <PlayIcon />
       </Fab> */}
