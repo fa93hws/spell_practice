@@ -31,6 +31,9 @@ export class WordListModel extends Pageable<WordItemModel> implements IPracticeL
   @bindthis public addWords(words: WordItemModel[]) {    
     words.forEach(this.addWord);
   }
+  @bindthis public removeWord(spell: string) {
+    this.items = this.items.filter(w => w.spell !== spell);
+  }
 
   // return an array fo [spell, numTried, numCorrect, timeAdded]
   @bindthis public toStorageFormat(): ReadonlyArray<StorageFormatType> {

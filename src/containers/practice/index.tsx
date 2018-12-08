@@ -13,6 +13,7 @@ import styles from './styles.less';
 export interface IPracticeWord {
   spell: string;
   numTried: number;
+  numCorrect: number;
   accuracy: number;
 
   compare: (spell: string) => boolean;
@@ -20,6 +21,7 @@ export interface IPracticeWord {
 export interface IPracticeList {
   pickRandomly: () => IPracticeWord;
   saveToStorage: () => void;
+  removeWord: (spell: string) => void;
 }
 
 function PracticeForm({ list }: { list: IPracticeList }) {
@@ -33,29 +35,44 @@ function PracticeForm({ list }: { list: IPracticeList }) {
     function handler(ev: KeyboardEvent) {
       if (ev.key !== 'Enter') return;
       // ctrl + enter, show answer
-      if (ev.ctrlKey) setIsAnswerShown(true);
+      if (ev.ctrlKey) showAnswer();
       // alt + enter, read again
       if (ev.altKey) voice.speak(word.spell, 'US English Male');
     }
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [word.spell]);
+
   // read the word
   useEffect(() => {
     voice.speak(word.spell, 'US English Male');
   }, [word, word.numTried]);
 
+  function showAnswer() {
+    setIsAnswerShown(true);
+    word.compare('');
+  }
+  function nextWord() {
+    setIsWrong(false);
+    setIsAnswerShown(false);
+    setWord(list.pickRandomly());      
+  }
+  // handle submit
   function onKeyPress(ev: React.KeyboardEvent<HTMLInputElement>) {
     if (ev.key !== 'Enter' || ev.ctrlKey || ev.altKey) return;
     setSpellDirectly('');
     if (word.compare(spell)) {
-      setIsWrong(false);
-      setIsAnswerShown(false);
-      setWord(list.pickRandomly());      
+      nextWord();
+      if (isAnswerShown) word.numCorrect--;
     }
-    else {
-      setIsWrong(true);
-    }
+    else setIsWrong(true);
+    setTimeout(list.saveToStorage);
+  }
+
+  // handle removing
+  function onRemoveClicked() {
+    list.removeWord(word.spell);
+    nextWord();
     setTimeout(list.saveToStorage);
   }
 
@@ -86,6 +103,7 @@ function PracticeForm({ list }: { list: IPracticeList }) {
         <Button
           color="primary"
           variant="contained"
+          onClick={onRemoveClicked}
         >
           Remove
         </Button>
