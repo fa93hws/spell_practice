@@ -42,7 +42,12 @@ function PracticeList({ list }: { list: IPracticeList }) {
   useEffect(() => {
     setTimeout(() => voice.speak(word.spell, 'US English Female'));
     return () => list.saveToStorage();
-  }, [word, word.numTried, list]);
+  }, [word, word.numTried]);
+
+  // random a word when list changes
+  useEffect(() => {
+    setWord(list.pickRandomly());
+  }, [list]);
 
   // end of hooks
   assertUndefined(word, 'word', 'list can not be empty');
@@ -144,7 +149,9 @@ function RandomListGenerationButton({ total, setList, repo }: {
   setList: (list: IPracticeList) => void;
 }) {
   function handleClick() {
-    setList(repo.generateRandomList(total));
+    const newList = repo.generateRandomList(total);
+    console.log(newList)
+    setList(newList);
   }
   return (
     <Tooltip
@@ -176,7 +183,12 @@ function PracticeForm({ repo }: { repo: IWordRepository }) {
       <div className={styles.randomGenerator}>
         {
           [20, 50, 100].map(total =>
-            <RandomListGenerationButton total={total} setList={setList} repo={repo}/>
+            <RandomListGenerationButton
+              repo={repo}
+              key={total}
+              total={total}
+              setList={setList}
+            />
           )
         }
       </div>
