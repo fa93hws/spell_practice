@@ -3,6 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 
 import useTextInput from '@/utils/hooks/text-input';
@@ -137,6 +138,31 @@ function PracticeList({ list }: { list: IPracticeList }) {
   );
 }
 
+function RandomListGenerationButton({ total, setList, repo }: {
+  total: number,
+  repo: IWordRepository,
+  setList: (list: IPracticeList) => void;
+}) {
+  function handleClick() {
+    setList(repo.generateRandomList(total));
+  }
+  return (
+    <Tooltip
+    placement="top"
+    enterDelay={300}
+      title={`Generate ${total} random words`}
+    >
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={handleClick}
+        className={styles.randomButton}
+      >
+        Random {total}
+      </Button>
+    </Tooltip>
+  );
+}
 function PracticeForm({ repo }: { repo: IWordRepository }) {
   const [list, setList] = useState<IPracticeList | null>(null);
 
@@ -147,11 +173,18 @@ function PracticeForm({ repo }: { repo: IWordRepository }) {
 
   return (
     <section className={styles.form}>
-    {
-      list === null?
-      null:
-      <PracticeList list={list}/>
-    }
+      <div className={styles.randomGenerator}>
+        {
+          [20, 50, 100].map(total =>
+            <RandomListGenerationButton total={total} setList={setList} repo={repo}/>
+          )
+        }
+      </div>
+      {
+        list === null?
+        null:
+        <PracticeList list={list}/>
+      }
     </section>
   );
 }
