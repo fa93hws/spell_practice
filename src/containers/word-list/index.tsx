@@ -5,23 +5,24 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
-import wordApis from '@/utils/api/word-api';
-import { WordItemModel } from '@/utils/models/word-item';
-import { WordListModel } from '@/utils/models/word-list';
+import WordItemModel from '@/utils/models/word-item';
+import WordRepository from '@/utils/models/word-repo';
 import useTextInput from '@/utils/hooks/text-input';
 import globalStore from '@/store';
 import ListTable from './list-table';
 import styles from './styles.less';
 
+import { IWordRepository } from '@/utils/interfaces';
+
 function AddWordSection() {
   const [text, setText, setTextDirectly] = useTextInput('');
-  const [list, setList] = globalStore.useState<WordListModel>('word-list');
+  const [repo, setRepo] = globalStore.useState<IWordRepository>('word-repo');
 
   function addWords() {
     const newWords = text.split('\r').join('').split('\n').map(s => new WordItemModel(s));
-    list.addWords(newWords);
-    setList(new WordListModel(list.items));
-    wordApis.saveToStorage(list);
+    repo.addWords(newWords);
+    setRepo(new WordRepository(repo.items));
+    repo.saveToStorage();
     setTextDirectly('');
   }
 

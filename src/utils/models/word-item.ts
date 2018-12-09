@@ -1,9 +1,8 @@
-import { IWordDetail } from '@/containers/word-list/list-table';
-import { IPracticeWord } from '@/containers/practice';
+import bindthis from '../decorators/bindthis';
 
-import bindthis from '@/utils/decorators/bindthis';
+import { IComparable, IWordDetail } from '../interfaces'
 
-export class WordItemModel implements IWordDetail, IPracticeWord {
+export default class WordItemModel implements IWordDetail, IComparable<string> {
   constructor(
     public spell: string,
     public numTried: number = 0,
@@ -18,14 +17,15 @@ export class WordItemModel implements IWordDetail, IPracticeWord {
     else return this.numCorrect / this.numTried;
   }
 
-  public clone(): WordItemModel {
-    return new WordItemModel(this.spell, this.numTried, this.numCorrect, this.timeAdded);
-  }
-
-  @bindthis public compare(spell: string): boolean {
+  @bindthis public compareTo(spell: string): number {
     this.numTried++;
-    const result = this.spell.toLowerCase() === spell.toLowerCase();
-    if (result) this.numCorrect++;
-    return result;    
+    let result: number = 0;
+    if (this.spell.toLocaleLowerCase() > spell.toLocaleLowerCase())
+      result = 1;
+    else if (this.spell.toLocaleLowerCase() < spell.toLocaleLowerCase())
+      result = -1;
+    // const result = this.spell.toLowerCase() === spell.toLowerCase();
+    if (result === 0) this.numCorrect++;
+    return result;
   }
 }

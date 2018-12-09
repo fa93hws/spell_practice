@@ -1,6 +1,6 @@
 import * as Mock from 'mockjs';
 
-import { WordItemModel } from '../word-item';
+import WordItemModel from '../word-item';
 
 describe('word-item', () => {
   it('constructor', () => {

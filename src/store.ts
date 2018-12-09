@@ -1,17 +1,9 @@
 import Store from './utils/shared-state';
-import { WordListModel } from './utils/models/word-list';
-import wordApis from './utils/api/word-api';
+import WordRepository from './utils/models/word-repo';
 
-export type GlobalStateType = 'word-list';
+
+export type GlobalStateType = 'word-repo';
 const globalStore = new Store<GlobalStateType>();
-globalStore.createState<WordListModel>('word-list', new WordListModel([]));
-
-// export const refreshList = () => new Promise((resolve, reject) => {
-//   const [, setList] = globalStore.useState<WordListModel>('word-list');
-//   wordApis.loadList().then(list => {
-//     setList(list);
-//     resolve();
-//   }).catch(reject);
-// });
+globalStore.createState<WordRepository>('word-repo', new WordRepository([]));
 
 export default globalStore;

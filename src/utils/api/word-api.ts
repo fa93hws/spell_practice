@@ -1,25 +1,27 @@
-import axios, { AxiosPromise } from 'axios';
+import axios from 'axios';
 
-import { WordListModel } from '../models/word-list';
+import WordRepository from '../models/word-repo';
 import bindthis from '../decorators/bindthis';
+
+import { IWordRepository, StorageFormatType } from '../interfaces';
 
 class WordApis {
   private storageKey = 'word-list';
 
-  public saveToStorage = (list: WordListModel) => new Promise((resolve, reject) => {
+  public saveToStorage = (arr: ReadonlyArray<StorageFormatType>) => new Promise((resolve, reject) => {
     try {
-      const arr = list.toStorageFormat();
+      // const arr = list.toStorageFormat();
       localStorage.setItem(this.storageKey, JSON.stringify(arr));
       resolve();
     } catch { reject(); }
   });
 
-  public loadList: () => Promise<WordListModel> = () => new Promise((resolve, reject) => {
+  public loadRepo: () => Promise<IWordRepository> = () => new Promise((resolve, reject) => {
     try {
       const raw = localStorage.getItem(this.storageKey);
       if (raw === null) return reject('list is not initialized')
       const arr = JSON.parse(raw);
-      const list = WordListModel.retrieveFromStorageFormat(arr);
+      const list = WordRepository.retrieveFromStorageFormat(arr);
       resolve(list);
     } catch { reject('error in loading list') }
   });

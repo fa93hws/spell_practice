@@ -1,66 +1,22 @@
-import { IWordDetail } from '@/containers/word-list/list-table';
-import { IPracticeList } from '@/containers/practice';
 import bindthis from '../decorators/bindthis';
-import { Pageable } from './pageable';
-import { WordItemModel } from "./word-item";
-import wordApis from '../api/word-api';
+import WordItemModel from './word-item';
 
-export type StorageFormatType = [string, number, number, string];
+import { IPracticeList, IWordRepository } from '../interfaces';
 
-export class WordListModel extends Pageable<WordItemModel> implements IPracticeList {
-  constructor(public items: WordItemModel[]) {
-    super();
-  };
-  public get length() {
-    return this.items.length;
-  }
-  static retrieveFromStorageFormat(raw: ReadonlyArray<StorageFormatType>): WordListModel {
-    const words = raw.map(r => new WordItemModel(...r));
-    return new WordListModel(words);
-  }
+export default class WordListModel implements IPracticeList {
+  constructor(public words: WordItemModel[], public repo: IWordRepository) {}
 
-  @bindthis public hasWord(spell: string) {
-    return this.items.findIndex(i => i.spell === spell) > -1;
+  @bindthis public pickRandomly(): WordItemModel {
+    const idx = Math.floor(Math.random() * this.words.length);
+    // console.log(idx);
+    return this.words[idx];
   }
-
-  @bindthis public addWord(word: WordItemModel) {
-    // console.log(word.spell, this.hasWord(word.spell))
-    if (!this.hasWord(word.spell) && word.spell !== '')
-      this.items.push(word);
-  }
-  @bindthis public addWords(words: WordItemModel[]) {    
-    words.forEach(this.addWord);
-  }
-  @bindthis public removeWord(spell: string) {
-    this.items = this.items.filter(w => w.spell !== spell);
-  }
-
-  // return an array fo [spell, numTried, numCorrect, timeAdded]
-  @bindthis public toStorageFormat(): ReadonlyArray<StorageFormatType> {
-    return this.items.map(w =>
-      <StorageFormatType>[w.spell, w.numTried, w.numCorrect, w.timeAdded]
-    );
+  @bindthis public removeWord(spell: string): void {
+    this.words = this.words.filter(w => w.spell !== spell);
+    this.repo.removeWord(spell);
+    setTimeout(this.repo.saveToStorage);
   }
   @bindthis public saveToStorage(): void {
-    wordApis.saveToStorage(this);
-  }
-  @bindthis public pickRandomly(): WordItemModel {
-    const idx = Math.floor(Math.random() * this.length);
-    return this.items[idx];
-  }
-
-  @bindthis private desc(a: IWordDetail, b: IWordDetail, orderBy: keyof IWordDetail) {
-    if (b[orderBy] < a[orderBy]) return 1;
-    else if (b[orderBy] > a[orderBy]) return -1;
-    else return 0;
-  }
-  @bindthis public StableSort(orderBy: keyof IWordDetail, order: 'asc' | 'desc') {
-    this.items = (this.items.map((e, i) => [e, i]) as Array<[WordItemModel, number]>)
-    .sort((a, b) => {
-      let compareResult = this.desc(a[0], b[0], orderBy);
-      if (compareResult === 0) compareResult = a[1] - b[1];
-      if (order === 'asc') return -compareResult;
-      else return compareResult
-    }).map(e => e[0]);
+    setTimeout(this.repo.saveToStorage);
   }
 }

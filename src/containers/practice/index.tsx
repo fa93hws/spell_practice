@@ -6,26 +6,17 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
 import useTextInput from '@/utils/hooks/text-input';
+import { assertNull, assertUndefined } from '@/utils/throw-error';
 import voice from '@/assets/js/responsivevoice';
 import wordApis from '@/utils/api/word-api';
 import styles from './styles.less';
 
-export interface IPracticeWord {
-  spell: string;
-  numTried: number;
-  numCorrect: number;
-  accuracy: number;
+import { IWordDetail, IComparable, IPracticeList, IWordRepository } from '@/utils/interfaces';
 
-  compare: (spell: string) => boolean;
-}
-export interface IPracticeList {
-  pickRandomly: () => IPracticeWord;
-  saveToStorage: () => void;
-  removeWord: (spell: string) => void;
-}
+type IPracticeWord = IComparable<string> & IWordDetail
 
-function PracticeForm({ list }: { list: IPracticeList }) {
-  const [word, setWord] = useState<IPracticeWord>(list.pickRandomly());
+function PracticeList({ list }: { list: IPracticeList }) {
+  const [word, setWord] = useState<IPracticeWord>(list.words[0]);
   const [totalCount, setTotalCount] = useState(0);
   const [numCorrect, setNumCorrect] = useState(0);
   const [spell, setSpell, setSpellDirectly] = useTextInput('');
@@ -45,15 +36,19 @@ function PracticeForm({ list }: { list: IPracticeList }) {
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [word.spell]);
-
+  
   // read the word
   useEffect(() => {
-    voice.speak(word.spell, 'US English Female');
-  }, [word, word.numTried]);
+    setTimeout(() => voice.speak(word.spell, 'US English Female'));
+    return () => list.saveToStorage();
+  }, [word, word.numTried, list]);
+
+  // end of hooks
+  assertUndefined(word, 'word', 'list can not be empty');
 
   function showAnswer() {
     setIsAnswerShown(true);
-    word.compare('');
+    word.compareTo('');
     wordApis.getTranslation(word.spell).then(setExplanation).catch(err => {
       console.error(err);
       setExplanation('Error in getting translation');
@@ -61,35 +56,36 @@ function PracticeForm({ list }: { list: IPracticeList }) {
   }
 
   function nextWord() {
+    assertNull(list, 'list');
     setIsWrong(false);
     setIsAnswerShown(false);
     setExplanation('');
     setSpellDirectly('');
-    setWord(list.pickRandomly());
+    const newWord = list!.pickRandomly();
+    setWord(newWord);
     setTotalCount(totalCount + 1);
   }
   // handle submit
   function onKeyPress(ev: React.KeyboardEvent<HTMLInputElement>) {
     if (ev.key !== 'Enter' || ev.ctrlKey || ev.altKey) return;
     setSpellDirectly('');
-    if (word.compare(spell)) {
+    if (word.compareTo(spell) === 0) {
       nextWord();
       if (isAnswerShown) word.numCorrect--;
       else if (!isWrong) setNumCorrect(numCorrect + 1)
     }
     else if (isWrong === false) setIsWrong(true);
-    setTimeout(list.saveToStorage);
   }
 
   // handle removing
   function onRemoveClicked() {
-    list.removeWord(word.spell);
+    assertNull(list, 'list');
+    list!.removeWord(word.spell);
     nextWord();
-    setTimeout(list.saveToStorage);
   }
 
   return (
-    <section className={styles.form}>
+    <React.Fragment>
       <Typography variant="body1" component="p">
         Accuracy: {numCorrect} out of {totalCount}
       </Typography>
@@ -137,14 +133,33 @@ function PracticeForm({ list }: { list: IPracticeList }) {
           {explanation===''?'...':`(${explanation})`}
         </Typography>
       </div>
+    </React.Fragment>
+  );
+}
+
+function PracticeForm({ repo }: { repo: IWordRepository }) {
+  const [list, setList] = useState<IPracticeList | null>(null);
+
+  // generate list on mounted
+  useEffect(() => {
+    setList(repo.generateRandomList(20));
+  }, []);
+
+  return (
+    <section className={styles.form}>
+    {
+      list === null?
+      null:
+      <PracticeList list={list}/>
+    }
     </section>
   );
 }
 
 export default function PracticePage() {
-  const [list, setList] = useState<IPracticeList | null>(null);
+  const [repo, setRepo] = useState<IWordRepository | null>(null);
   useEffect(() => {
-    wordApis.loadList().then(setList).catch(console.error);
+    wordApis.loadRepo().then(setRepo).catch(console.error);
   }, []);
 
   return (
@@ -176,9 +191,9 @@ export default function PracticePage() {
         </section>
         <Divider />
         {
-          list === null ?
+          repo === null ?
           null:
-          <PracticeForm list={list} />
+          <PracticeForm repo={repo} />
         }
       </Paper>
     </main>
